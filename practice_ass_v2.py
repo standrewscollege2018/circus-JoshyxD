@@ -42,6 +42,14 @@ def update_label():
 
 update_label()
 
+
+
+counter = IntVar()
+counter.set(0)
+counter_label_text = StringVar()
+counter_label_text.set("")
+counter_lbl = Label(root, textvariable = counter_label_text).grid(row =2, column = 2)
+
 selected_show = StringVar()
 selected_show.set(show_name_list[0])
 sell_option = OptionMenu(root, selected_show, *show_name_list)
@@ -50,21 +58,11 @@ sell_option.grid(row=1)
 ticket_number = IntVar()
 sell_entry = Entry(root, textvariable = ticket_number).grid(row=1, column =2)
 
-new_available = IntVar()
+def update_counter():
+    counter.set(counter.get() + ticket_number.get())
+    counter_label_text.set(str(counter.get()) + " tickets sold")
+update_counter()
 
-# def update_lbl(new_available):
-    #global heading_lbl
-    
-   # heading_lbl.destroy()
-
-    #for s in show_list:
-        #if s._name == selected_show.get():
-         #   available.set(available.get() + selected_show.get() + "- " + str(new_available.get()) + "\n")
-        #else:
-            #available.set(available.get() + s._name + "- " + str(s._available) + " available/150 available ($" + str(s._price) + ")" + "\n")  
-        #
-   # heading_lbl = Label(root, textvariable=available).grid(row = 0, column = 0)
-  #  return heading_lbl
 
 #define function to sell tickets by reducing available of given show
 def sell_tickets():
@@ -72,14 +70,11 @@ def sell_tickets():
     for s in show_list:
         if selected_show.get() == s._name:
             s._change_available(ticket_number)
-
-
-        new_available.set(s._available)
-        update_label()
+            update_label()
+            update_counter()
 
 
 
 sell_button = Button(root, text = "Sell tickets", command = sell_tickets).grid(row=1, column=3)
-
 
 root.mainloop()
