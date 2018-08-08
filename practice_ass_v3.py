@@ -50,29 +50,62 @@ counter_label_text = StringVar()
 counter_label_text.set("")
 counter_lbl = Label(root, textvariable = counter_label_text).grid(row =2, column = 2)
 
+
+
 selected_show = StringVar()
 selected_show.set(show_name_list[0])
 sell_option = OptionMenu(root, selected_show, *show_name_list)
 sell_option.grid(row=1)
 
 ticket_number = IntVar()
+
 sell_entry = Entry(root, textvariable = ticket_number).grid(row=1, column =2)
+    
+summary_counter = IntVar()
+summary_counter.set(0)
 
-def update_counter():
-    counter.set(counter.get() + ticket_number.get())
-    counter_label_text.set(str(counter.get()) + " tickets sold")
-update_counter()
+summary_cost = IntVar()
+summary_cost.set(0)
 
+summary_label_text = StringVar()
 
 #define function to sell tickets by reducing available of given show
+price = IntVar()
 def sell_tickets():
-    for s in show_list:
-        if selected_show.get() == s._name:
-            s._change_available(ticket_number)
-            update_label()
-            update_counter()
+    try:
+        if ticket_number.get() == 0:
+           counter_label_text.set("You cannot order 0 tickets")
+
+        else:
+            for s in show_list:
+                if selected_show.get() == s._name:
+                    if (s._available - ticket_number.get()) >= 0:
+                        s._change_available(ticket_number)  
+                        price.set(s._price)
+                        update_label()
+                        update_counter(price)
+                    else:
+                        counter_label_text.set("You cannot order that amount of tickets")
+    except:
+        counter_label_text.set("Enter a number of tickets, goober")
 
 
+def update_summary():
+    summary_label_text.set("SUMMARY" + "\n" + str(summary_counter.get()) + " tickets sold today" + "\n" + "$" + str(summary_cost.get()) + " earned today")
+
+summary_lbl = Label(root, textvariable = summary_label_text).grid(row=4, column = 0)
+
+
+
+def update_counter(price):
+    counter.set(ticket_number.get())
+    counter_label_text.set(str(counter.get()) + " tickets sold")
+
+    summary_counter.set(summary_counter.get() + counter.get())
+    summary_cost.set(summary_cost.get() + ticket_number.get() * price.get())
+    update_summary()
+
+update_summary()
 
 sell_button = Button(root, text = "Sell tickets", command = sell_tickets).grid(row=1, column=3)
 
