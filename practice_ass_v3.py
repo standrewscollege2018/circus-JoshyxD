@@ -22,6 +22,10 @@ class Show:
     def _change_available(self, ticket_number):
         self._available -= ticket_number.get()
 
+    def _reset_shows(self):
+        self._available = self._capacity
+        update_label()
+
 show_list = []
 show_name_list = []
 
@@ -41,8 +45,6 @@ def update_label():
     heading_lbl = Label(root, textvariable=available).grid(row = 0, column = 0)
 
 update_label()
-
-
 
 counter = IntVar()
 counter.set(0)
@@ -92,7 +94,6 @@ def sell_tickets():
 
 def update_summary():
     summary_label_text.set("SUMMARY" + "\n" + str(summary_counter.get()) + " tickets sold today" + "\n" + "$" + str(summary_cost.get()) + " earned today")
-
 summary_lbl = Label(root, textvariable = summary_label_text).grid(row=4, column = 0)
 
 
@@ -108,5 +109,19 @@ def update_counter(price):
 update_summary()
 
 sell_button = Button(root, text = "Sell tickets", command = sell_tickets).grid(row=1, column=3)
+
+
+def reset_shows():
+    for s in show_list:
+        s._reset_shows()
+        ticket_number.set(0)
+        summary_counter.set(0)
+        summary_cost.set(0)
+        counter.set(0)
+        update_counter(price)
+        update_summary()
+        
+
+reset_button = Button(root, text = "Reset shows", command = reset_shows).grid(row = 3, column = 2)
 
 root.mainloop()
